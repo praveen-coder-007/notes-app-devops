@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  clusterIP: None            # headless — required for StatefulSets
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+      targetPort: 27017
+---                          # separates the two objects in one file
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: mongodb       # links to the headless Service above
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:                  # pod blueprint (same idea as your Deployment)
+    metadata:
+      labels:
+        app: mongodb         # must match selector.matchLabels above
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          volumeMounts:      # plug the storage INTO the container
+            - name: mongo-data
+              mountPath: /data/db    # where MongoDB writes its data
+  volumeClaimTemplates:      # CREATE the persistent storage (sibling of template)
+    - metadata:
+        name: mongo-data     # must match volumeMounts.name above
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi     # 1 gigabyte of persistent storage
+    
