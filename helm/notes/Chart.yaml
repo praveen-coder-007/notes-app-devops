@@ -1,0 +1,5 @@
+apiVersion: v2
+name: notes
+description: A three-tier notes app (frontend, backend, MongoDB)
+version: 0.1.0
+appVersion: "1.0"

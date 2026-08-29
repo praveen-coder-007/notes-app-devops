@@ -1,0 +1,19 @@
+backend:
+  replicas: 1
+  image:
+    repository: pd0077/notes-backend
+    tag: v1
+  port: 8080
+  mongoUri: "mongodb://mongodb:27017/notesdb"
+
+frontend:
+  replicas: 1
+  image:
+    repository: pd0077/notes-frontend
+    tag: v2
+  port: 80
+
+mongodb:
+  image: mongo:latest
+  port: 27017
+  storage: 1Gi
